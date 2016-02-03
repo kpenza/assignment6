@@ -4,16 +4,13 @@ import csv
 import datetime
 import numpy as np
 import matplotlib.pyplot as plt
-
+from  Report import Report
 from operator import itemgetter
 
-
-
-
-def offensefunction(offenselist, rowno):
+def offensefunction(reportlist):
     crimedict = {}
-    for row in offenselist:
-        crime = row[rowno]
+    for row in reportlist:
+        crime = row.offense
         if crime in crimedict:
 #            print 'token exists'
             crimedict[crime] = crimedict[crime]  + 1
@@ -110,23 +107,16 @@ timeconvert =  {0 : "Early morning",
                24 : "Night",
 }
 
-def offensetime(offenselist,offenseidx, reportedidx, crim, csvfile):
+def offensetime(reportlist, crim):
     dict = {}
-    csvfile.seek(0)
-    for row in offenselist:
-        csvfile.seek(0)
-        offense = row[offenseidx]
-        if offense == crim:
-            reportdate  = row[reportedidx]
-            d = datetime.datetime.strptime( reportdate, "%m/%d/%Y %H:%M:%S %p" )
-            t = d.time()
-            key = timeconvert[t.hour]
-            print key
+    for row in reportlist:
+        if row.offense == crim:
+            key = timeconvert[row.reportdate.time().hour]
             if key in dict:
                 dict[key] = dict[key] + 1
             else:
                 dict[key] = 1
-    print dict
+    return dict
 
 # http://stackoverflow.com/questions/19060144/more-efficient-matplotlib-stacked-bar-chart-how-to-calculate-bottom-values
 # https://bespokeblog.wordpress.com/2011/07/11/basic-data-plotting-with-matplotlib-part-3-histograms/        
@@ -135,32 +125,44 @@ def offensetime(offenselist,offenseidx, reportedidx, crim, csvfile):
 # http://stackoverflow.com/questions/12236566/setting-different-color-for-each-series-in-scatter-plot-on-matplotlib
 # http://matplotlib.org/examples/pylab_examples/scatter_star_poly.html
 
-def chart1(csvfile):
-        next(csvfile) # has header
-        spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
-        crimedict = offensefunction(spamreader, 4)
+def chart1(reportlist):
+        crimedict = offensefunction(reportlist)
         showtop(crimedict, 20)
         crimedesc, crimeoccur = gettopitems(crimedict, 20)
         plotgraph(crimedesc, crimeoccur)
         print crimedesc
         print crimeoccur
 
-def chart2(csvfile):
-        next(csvfile) # has header
-        spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
-        crimedict = offensefunction(spamreader, 4)
+def chart2(reportlist):
+        dict = {}
+        crimedict = offensefunction(reportlist)
         showtop(crimedict, 20)
         crimedesc, crimeoccur = gettopitems(crimedict, 20)
         for crim in crimedesc:
-            offensetime(spamreader, 4, 8, crim, csvfile)
+            offensetiming = offensetime(reportlist, crim)
+            dict[crim] = offensetiming
+        print dict
 #       plotgraph(crimedesc, crimeoccur)
 #        print crimedesc
 #        print crimeoccur
 
+def loadcsv(datafile, crimeidx, reportdateidx, dateformat):
+    reportlist = []
+    with open(datafile, 'rb') as csvfile:
+        next(csvfile) # has header
+        offenselist = csv.reader(csvfile, delimiter=',', quotechar='|')
+        for row in offenselist:
+            crime = row[crimeidx]
+            reportdate = datetime.datetime.strptime(row[reportdateidx], dateformat)
+            reportlist.append(Report(crime,reportdate))
+    return reportlist
+
 def main():
-    with open('seattle_incidents_summer_2014.csv', 'rb') as csvfile:
-        #chart1(csvfile)
-        chart2(csvfile)
+    reportlist = loadcsv('seattle_incidents_summer_2014.csv', 4, 8 , "%m/%d/%Y %H:%M:%S %p")
+#    for r in reportlist:
+#        print r
+#    chart1(reportlist)
+    chart2(reportlist)
 
 if __name__ == '__main__':
     main()
