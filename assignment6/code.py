@@ -78,30 +78,43 @@ def autolabel(rects, ax):
                 '%d' % int(height),
                 ha='center', va='bottom')
 
+def autolabelh(rects, ax):
+    # attach some text labels
+    for rect in rects:
+        width = rect.get_width()
+        height = rect.get_height()
+        ax.text(rect.get_x() + 1.05 *width  , rect.get_y() + 1.05*height,
+                '%d' % int(width),
+                ha='left', va='top')
+
 def plotgraphchart2(title, earlymorning, morning, afternoon, night):
      
 #    for k in range (0, l):
 #        print crimedict[k] + " : " + str(crimeoccur[k])
-     N = len(title)
-     ind = np.arange(N)    # the x locations for the groups
-     width = 0.18       # the width of the bars: can also be len(x) sequence
 
-     fig, ax = plt.subplots()
-     p1 = ax.barh(ind, earlymorning, width, color='r')
-     p2 = ax.barh(ind + width, morning, width, color='y')
-     p3 = ax.barh(ind + (width * 2), afternoon, width, color='b')
-     p4 = ax.barh(ind + (width * 3), night, width, color='g')
-    
-     ax.set_ylabel('Occurance')
-     ax.set_title('Scores by group and gender')
-     ax.set_yticks(ind + (width * 3))
-     ax.set_yticklabels(title)
-     ax.legend((p1[0], p2[0], p3[0], p4[0]), (EARLY_MORNING, MORNING, AFTERNOON,NIGHT))
-     autolabel(p1, ax)
-     autolabel(p2, ax)
-     autolabel(p3, ax)
-     autolabel(p4, ax)
-     plt.show()
+# Final hbar !!
+      N = len(title)
+      ind = np.arange(N)    # the x locations for the groups
+      width = 0.2       # the width of the bars: can also be len(x) sequence
+ 
+      fig, ax = plt.subplots()
+      p1 = ax.barh(ind, earlymorning, width, color='r')
+      p2 = ax.barh(ind + width, morning, width, color='y')
+      p3 = ax.barh(ind + (width * 2), afternoon, width, color='b')
+      p4 = ax.barh(ind + (width * 3), night, width, color='g')
+     
+      ax.set_ylabel('Occurance')
+      ax.set_title('Scores by group and gender')
+      ax.set_yticks(ind + (width * 3))
+      ax.set_yticklabels(title)
+      ax.xaxis.set_ticks_position('bottom')
+      ax.yaxis.set_ticks_position('left')
+      ax.legend((p1[0], p2[0], p3[0], p4[0]), (EARLY_MORNING, MORNING, AFTERNOON,NIGHT))
+      autolabelh(p1, ax)
+      autolabelh(p2, ax)
+      autolabelh(p3, ax)
+      autolabelh(p4, ax)
+      plt.show()
 
 #     N = len(title)
 #     ind = np.arange(N)    # the x locations for the groups
@@ -117,11 +130,16 @@ def plotgraphchart2(title, earlymorning, morning, afternoon, night):
 #     ax.set_title('Scores by group and gender')
 #     ax.set_xticks(ind + width)
 #     ax.set_xticklabels((EARLY_MORNING, MORNING, AFTERNOON,NIGHT))
+#     ax.xaxis.set_ticks_position('bottom')
+#     ax.tick_params(labelsize=13)
+#     ax.yaxis.set_ticks_position('left')
+#     ax.set_xticklabels(title, rotation=75)
 #     ax.legend((p1[0], p2[0], p3[0], p4[0]), (EARLY_MORNING, MORNING, AFTERNOON,NIGHT))
 #     autolabel(p1, ax)
 #     autolabel(p2, ax)
 #     autolabel(p3, ax)
 #     autolabel(p4, ax)
+#     plt.tight_layout()
 #     plt.show()
 
 ##     N = len(title)
