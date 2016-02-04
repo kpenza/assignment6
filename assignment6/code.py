@@ -7,6 +7,11 @@ import matplotlib.pyplot as plt
 from  Report import Report
 from operator import itemgetter
 
+EARLY_MORNING="Early morning"
+MORNING="Morning"
+AFTERNOON="Afternoon"
+NIGHT="Night"
+
 def offensefunction(reportlist):
     crimedict = {}
     for row in reportlist:
@@ -65,6 +70,56 @@ def plotgraph(crimedesc, crimeoccur):
      plt.tight_layout()
      plt.show()
 
+def autolabel(rects, ax):
+    # attach some text labels
+    for rect in rects:
+        height = rect.get_height()
+        ax.text(rect.get_x() + rect.get_width()/2., 1.05*height,
+                '%d' % int(height),
+                ha='center', va='bottom')
+
+def plotgraphchart2(title, earlymorning, morning, afternoon, night):
+     
+#    for k in range (0, l):
+#        print crimedict[k] + " : " + str(crimeoccur[k])
+     N = len(title)
+     ind = np.arange(N)    # the x locations for the groups
+     width = 0.18       # the width of the bars: can also be len(x) sequence
+
+     fig, ax = plt.subplots()
+     p1 = ax.bar(ind, earlymorning, width, color='r')
+     p2 = ax.bar(ind + width, morning, width, color='y')
+     p3 = ax.bar(ind + (width * 2), afternoon, width, color='b')
+     p4 = ax.bar(ind + (width * 3), night, width, color='g')
+    
+     ax.set_ylabel('Occurance')
+     ax.set_title('Scores by group and gender')
+     ax.set_xticks(ind + width)
+     ax.set_xticklabels((EARLY_MORNING, MORNING, AFTERNOON,NIGHT))
+     ax.legend((p1[0], p2[0], p3[0], p4[0]), (EARLY_MORNING, MORNING, AFTERNOON,NIGHT))
+     autolabel(p1, ax)
+     autolabel(p2, ax)
+     autolabel(p3, ax)
+     autolabel(p4, ax)
+     plt.show()
+
+
+##     N = len(title)
+##     ind = np.arange(N)    # the x locations for the groups
+##     width = 0.35       # the width of the bars: can also be len(x) sequence
+## 
+##     p1 = plt.bar(ind, earlymorning, width, color='r')
+##     p2 = plt.bar(ind, morning, width, color='y', bottom=earlymorning)
+##     p3 = plt.bar(ind, afternoon, width, color='b', bottom=earlymorning)
+##     p4 = plt.bar(ind, night, width, color='g', bottom=earlymorning)
+## 
+##     plt.ylabel('Scores')
+##     plt.title('Scores by group and gender')
+##     plt.xticks(ind + width/2., title)
+###     plt.yticks(np.arange(0, 81, 10))
+##     plt.legend((p1[0], p2[0], p3[0], p4[0]), (EARLY_MORNING, MORNING, AFTERNOON,NIGHT))
+##     plt.show()
+
 
 def offensefunctionlists(offenselist, rowno, crimedict, crimeoccur):
     for row in offenselist:
@@ -80,31 +135,31 @@ def offensefunctionlists(offenselist, rowno, crimedict, crimeoccur):
     print crimedict
     print crimeoccur
 
-timeconvert =  {0 : "Early morning",
-                1 : "Early morning",
-                2 : "Early morning",
-                3 : "Early morning",
-                4 : "Early morning",
-                5 : "Early morning",
-                6 : "Morning",
-                7 : "Morning",
-                8 : "Morning",
-                9 : "Morning",
-               10 : "Morning",
-               11 : "Morning",
-               12 : "Afternoon",
-               13 : "Afternoon",
-               14 : "Afternoon",
-               15 : "Afternoon",
-               16 : "Afternoon",
-               17 : "Afternoon",
-               18 : "Night",
-               19 : "Night",
-               20 : "Night",
-               21 : "Night",
-               22 : "Night",
-               23 : "Night",
-               24 : "Night",
+timeconvert =  {0 : EARLY_MORNING,
+                1 : EARLY_MORNING,
+                2 : EARLY_MORNING,
+                3 : EARLY_MORNING,
+                4 : EARLY_MORNING,
+                5 : EARLY_MORNING,
+                6 : MORNING,
+                7 : MORNING,
+                8 : MORNING,
+                9 : MORNING,
+               10 : MORNING,
+               11 : MORNING,
+               12 : AFTERNOON,
+               13 : AFTERNOON,
+               14 : AFTERNOON,
+               15 : AFTERNOON,
+               16 : AFTERNOON,
+               17 : AFTERNOON,
+               18 : NIGHT,
+               19 : NIGHT,
+               20 : NIGHT,
+               21 : NIGHT,
+               22 : NIGHT,
+               23 : NIGHT,
+               24 : NIGHT,
 }
 
 def offensetime(reportlist, crim):
@@ -126,23 +181,54 @@ def offensetime(reportlist, crim):
 # http://matplotlib.org/examples/pylab_examples/scatter_star_poly.html
 
 def chart1(reportlist):
-        crimedict = offensefunction(reportlist)
-        showtop(crimedict, 20)
-        crimedesc, crimeoccur = gettopitems(crimedict, 20)
-        plotgraph(crimedesc, crimeoccur)
-        print crimedesc
-        print crimeoccur
+    crimedict = offensefunction(reportlist)
+    showtop(crimedict, 20)
+    crimedesc, crimeoccur = gettopitems(crimedict, 20)
+    plotgraph(crimedesc, crimeoccur)
+    print crimedesc
+    print crimeoccur
+
+def preparechart2(dict):
+    earlymorning = []
+    morning = []
+    afternoon = []
+    night = []
+    title = []
+    for entry in dict:
+        key = entry
+        title.append(key) # append heading
+        lists = dict[entry]
+        if EARLY_MORNING in lists:
+            earlymorning.append(lists[EARLY_MORNING])
+        else:
+            earlymorning.append(0)
+        if MORNING in lists:
+            morning.append(lists[MORNING])
+        else:
+            morning.append(0)
+        if AFTERNOON in lists:
+            afternoon.append(lists[AFTERNOON])
+        else:
+            afternoon.append(0)
+        if NIGHT in lists:
+            night.append(lists[NIGHT])
+        else:
+            night.append(0)
+    return title, earlymorning, morning, afternoon, night
 
 def chart2(reportlist):
-        dict = {}
-        crimedict = offensefunction(reportlist)
-        showtop(crimedict, 20)
-        crimedesc, crimeoccur = gettopitems(crimedict, 20)
-        for crim in crimedesc:
-            offensetiming = offensetime(reportlist, crim)
-            dict[crim] = offensetiming
-        print dict
-#       plotgraph(crimedesc, crimeoccur)
+    dict = {}
+    crimedict = offensefunction(reportlist)
+    showtop(crimedict, 20)
+    crimedesc, crimeoccur = gettopitems(crimedict, 20)
+    for crim in crimedesc:
+        offensetiming = offensetime(reportlist, crim)
+        dict[crim] = offensetiming
+    title, earlymorning, morning, afternoon, night = preparechart2(dict)
+    plotgraphchart2(title, earlymorning, morning, afternoon, night)
+#    print dict
+    
+#    plotgraph(crimedesc, crimeoccur)
 #        print crimedesc
 #        print crimeoccur
 
@@ -161,7 +247,7 @@ def main():
     reportlist = loadcsv('seattle_incidents_summer_2014.csv', 4, 8 , "%m/%d/%Y %H:%M:%S %p")
 #    for r in reportlist:
 #        print r
-#    chart1(reportlist)
+##    chart1(reportlist)
     chart2(reportlist)
 
 if __name__ == '__main__':
