@@ -7,4 +7,4 @@ class Report:
         self.zone = zone
 
     def __str__(self):
-         return "Offense:" + self.offense + " ReportDate: " + str(self.reportdate) + "District: " + district + "Zone: " + zone
+         return "Offense:" + self.offense + " ReportDate: " + str(self.reportdate) + "District: " + self.district + "Zone: " + self.zone

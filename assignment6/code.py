@@ -255,6 +255,59 @@ def preparechart2(dict):
             night.append(0)
     return title, earlymorning, morning, afternoon, night
 
+def plotgraphchart3(title, districtlist, zonelist, occurancelist, colorlist):
+     l = len(zonelist)
+     N = range(l)
+     jet = plt.get_cmap('jet')
+     fig = plt.figure(figsize=(12,8))
+     ax = fig.add_subplot(111)
+
+     p1 = plt.barh(N, occurancelist, align='center', color=colorlist, height=0.8, alpha=1)
+     plt.yticks(N, zonelist)
+     plt.xlabel('Crimes type')
+     plt.ylabel('Occurance')
+     plt.title('Crime occurance')
+     autolabelh(p1, ax)
+
+
+     plt.tight_layout()
+     plt.show()
+
+def preparechart3(dict, offense):
+    districtlist = []
+    zonelist = []
+    occurancelist = []
+    for entry in dict:
+        if entry.district == "" or entry.district == "99":
+              continue
+#          print entry.district + " " + entry.zone
+        key = entry.offense
+        if key == offense:
+            district = entry.district
+            zone = district + "/" + entry.zone
+            if zone in zonelist:
+                idx = zonelist.index(zone)
+                occurancelist[idx] = occurancelist[idx] + 1
+            else:
+                districtlist.append(district)
+                zonelist.append(zone)
+                occurancelist.append(1)
+    # sort
+    zonelist_s, occurancelist_s, districtlist_s = zip(*sorted(zip(zonelist,occurancelist,districtlist)))
+
+    uniquedistricts = list(set(districtlist_s))
+    uniquedistrictslen = len(uniquedistricts)
+   
+    jet = plt.get_cmap('jet') 
+    colors = jet(np.linspace(0, 1.0, uniquedistrictslen))
+    colorlist = []
+    for k in range(0, len(districtlist_s)):
+        d = districtlist_s[k]
+        idx = uniquedistricts.index(d)
+        colorlist.append(colors[idx])
+ 
+    return districtlist_s, zonelist_s, occurancelist_s,colorlist
+
 def chart2(reportlist):
     dict = {}
     crimedict = offensefunction(reportlist)
@@ -271,6 +324,17 @@ def chart2(reportlist):
 #        print crimedesc
 #        print crimeoccur
 
+def chart3(reportlist):
+    dict = {}
+    crimedict = offensefunction(reportlist)
+    crimedesc, crimeoccur = gettopitems(crimedict, 1)
+    for crim in crimedesc:
+        districtlist, zonelist, occurancelist, colorlist = preparechart3(reportlist, crim)
+        plotgraphchart3(crim, districtlist, zonelist, occurancelist, colorlist)
+        print districtlist
+        print zonelist 
+        print occurancelist
+
 def loadcsv(datafile, crimeidx, reportdateidx, districtidx, zoneidx, dateformat):
     reportlist = []
     with open(datafile, 'rb') as csvfile:
@@ -285,11 +349,12 @@ def loadcsv(datafile, crimeidx, reportdateidx, districtidx, zoneidx, dateformat)
     return reportlist
 
 def main():
-    reportlist = loadcsv('seattle_incidents_summer_2014.csv', 6, 8,12,13, "%m/%d/%Y %H:%M:%S %p")
+    reportlist = loadcsv('seattle_incidents_summer_2014.csv', 6, 8,11,12, "%m/%d/%Y %H:%M:%S %p")
 #    for r in reportlist:
 #        print r
-    chart1(reportlist)
+#    chart1(reportlist)
 #    chart2(reportlist)
+    chart3(reportlist)
 
 if __name__ == '__main__':
     main()
