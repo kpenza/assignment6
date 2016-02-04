@@ -87,15 +87,15 @@ def plotgraphchart2(title, earlymorning, morning, afternoon, night):
      width = 0.18       # the width of the bars: can also be len(x) sequence
 
      fig, ax = plt.subplots()
-     p1 = ax.bar(ind, earlymorning, width, color='r')
-     p2 = ax.bar(ind + width, morning, width, color='y')
-     p3 = ax.bar(ind + (width * 2), afternoon, width, color='b')
-     p4 = ax.bar(ind + (width * 3), night, width, color='g')
+     p1 = ax.barh(ind, earlymorning, width, color='r')
+     p2 = ax.barh(ind + width, morning, width, color='y')
+     p3 = ax.barh(ind + (width * 2), afternoon, width, color='b')
+     p4 = ax.barh(ind + (width * 3), night, width, color='g')
     
      ax.set_ylabel('Occurance')
      ax.set_title('Scores by group and gender')
-     ax.set_xticks(ind + width)
-     ax.set_xticklabels((EARLY_MORNING, MORNING, AFTERNOON,NIGHT))
+     ax.set_yticks(ind + (width * 3))
+     ax.set_yticklabels(title)
      ax.legend((p1[0], p2[0], p3[0], p4[0]), (EARLY_MORNING, MORNING, AFTERNOON,NIGHT))
      autolabel(p1, ax)
      autolabel(p2, ax)
@@ -103,6 +103,26 @@ def plotgraphchart2(title, earlymorning, morning, afternoon, night):
      autolabel(p4, ax)
      plt.show()
 
+#     N = len(title)
+#     ind = np.arange(N)    # the x locations for the groups
+#     width = 0.18       # the width of the bars: can also be len(x) sequence
+#
+#     fig, ax = plt.subplots()
+#     p1 = ax.bar(ind, earlymorning, width, color='r')
+#     p2 = ax.bar(ind + width, morning, width, color='y')
+#     p3 = ax.bar(ind + (width * 2), afternoon, width, color='b')
+#     p4 = ax.bar(ind + (width * 3), night, width, color='g')
+#    
+#     ax.set_ylabel('Occurance')
+#     ax.set_title('Scores by group and gender')
+#     ax.set_xticks(ind + width)
+#     ax.set_xticklabels((EARLY_MORNING, MORNING, AFTERNOON,NIGHT))
+#     ax.legend((p1[0], p2[0], p3[0], p4[0]), (EARLY_MORNING, MORNING, AFTERNOON,NIGHT))
+#     autolabel(p1, ax)
+#     autolabel(p2, ax)
+#     autolabel(p3, ax)
+#     autolabel(p4, ax)
+#     plt.show()
 
 ##     N = len(title)
 ##     ind = np.arange(N)    # the x locations for the groups
