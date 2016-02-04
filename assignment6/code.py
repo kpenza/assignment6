@@ -60,13 +60,14 @@ def plotgraph(crimedesc, crimeoccur):
      ax = fig.add_subplot(111)
      
 
-     plt.barh(N, crimeoccur, align='center', color=jet(np.linspace(0, 1.0, len(crimedesc))), height=0.8, alpha=1)
+     p1 = plt.barh(N, crimeoccur, align='center', color=jet(np.linspace(0, 1.0, len(crimedesc))), height=0.8, alpha=1)
      plt.yticks(N, crimedesc)
      #plt.yticks(N, crimedesc, rotation=25)
      plt.xlabel('Crimes type')
      plt.ylabel('Occurance')
      plt.yticks(N, crimedesc)
      plt.title('Crime occurance')
+     autolabelh(p1, ax)
      plt.tight_layout()
      plt.show()
 
@@ -83,9 +84,9 @@ def autolabelh(rects, ax):
     for rect in rects:
         width = rect.get_width()
         height = rect.get_height()
-        ax.text(rect.get_x() + 1.05 *width  , rect.get_y() + 1.05*height,
+        ax.text(rect.get_x() + 1.05 * width  , rect.get_y() + (height/2) *.98 ,
                 '%d' % int(width),
-                ha='left', va='top')
+                ha='left', va='center')
 
 def plotgraphchart2(title, earlymorning, morning, afternoon, night):
      
@@ -270,7 +271,7 @@ def chart2(reportlist):
 #        print crimedesc
 #        print crimeoccur
 
-def loadcsv(datafile, crimeidx, reportdateidx, dateformat):
+def loadcsv(datafile, crimeidx, reportdateidx, districtidx, zoneidx, dateformat):
     reportlist = []
     with open(datafile, 'rb') as csvfile:
         next(csvfile) # has header
@@ -278,15 +279,17 @@ def loadcsv(datafile, crimeidx, reportdateidx, dateformat):
         for row in offenselist:
             crime = row[crimeidx]
             reportdate = datetime.datetime.strptime(row[reportdateidx], dateformat)
-            reportlist.append(Report(crime,reportdate))
+            district = row[districtidx]
+            zone = row[zoneidx]
+            reportlist.append(Report(crime,reportdate, district, zone))
     return reportlist
 
 def main():
-    reportlist = loadcsv('seattle_incidents_summer_2014.csv', 4, 8 , "%m/%d/%Y %H:%M:%S %p")
+    reportlist = loadcsv('seattle_incidents_summer_2014.csv', 6, 8,12,13, "%m/%d/%Y %H:%M:%S %p")
 #    for r in reportlist:
 #        print r
-##    chart1(reportlist)
-    chart2(reportlist)
+    chart1(reportlist)
+#    chart2(reportlist)
 
 if __name__ == '__main__':
     main()
