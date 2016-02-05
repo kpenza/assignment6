@@ -335,26 +335,47 @@ def chart3(reportlist):
         print zonelist 
         print occurancelist
 
-def loadcsv(datafile, crimeidx, reportdateidx, districtidx, zoneidx, dateformat):
+def loadcsv(datafile, crimeidx, districtidx, datetimeformat=None, zoneidx=None,reportdatetimeidx= None, alternatereportdatetimeidx=None, reportdateidx=None, reporttimeidx=None, reportdateformat=None, reporttimeformat=None ):
     reportlist = []
     with open(datafile, 'rb') as csvfile:
         next(csvfile) # has header
         offenselist = csv.reader(csvfile, delimiter=',', quotechar='|')
         for row in offenselist:
             crime = row[crimeidx]
-            reportdate = datetime.datetime.strptime(row[reportdateidx], dateformat)
+            if reportdatetimeidx is not None:
+                if row[reportdatetimeidx] == "":
+                    rd = row[alternatereportdatetimeidx]
+                else:
+                    rd = row[reportdatetimeidx]
+            if reportdateidx is not None and reporttimeidx is not None:
+                rd = row[reportdateidx] + " " + row[reporttimeidx]
+            reportdate = datetime.datetime.strptime(rd, datetimeformat)
             district = row[districtidx]
-            zone = row[zoneidx]
+            if zoneidx is not None:
+                zone = row[zoneidx]
+            else:
+                zone = district
             reportlist.append(Report(crime,reportdate, district, zone))
     return reportlist
 
 def main():
-    reportlist = loadcsv('seattle_incidents_summer_2014.csv', 6, 8,11,12, "%m/%d/%Y %H:%M:%S %p")
+    # 6 Summary Offense Code
+    # 8 Date Reported
+    # 9 Actual Date (sometimes None)
+    # 11 District/Sector
+    # 12 Zone/Beat
+#    reportlist = loadcsv(datafile='seattle_incidents_summer_2014.csv', crimeidx=6, reportdatetimeidx=9, alternatereportdatetimeidx=8, districtidx=11, zoneidx=12, datetimeformat="%m/%d/%Y %H:%M:%S %p")
+    # 2 Category
+    # 4 Date
+    # 5 Time
+    # 8 District
+    reportlist = loadcsv(datafile='sanfrancisco_incidents_summer_2014.csv', crimeidx=2, reportdateidx=4, reporttimeidx=5, districtidx=6, datetimeformat = "%m/%d/%Y %H:%M")
 #    for r in reportlist:
 #        print r
-#    chart1(reportlist)
+    chart1(reportlist)
 #    chart2(reportlist)
-    chart3(reportlist)
+#    chart3(reportlist)
+
 
 if __name__ == '__main__':
     main()
