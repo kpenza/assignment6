@@ -1,4 +1,4 @@
-#!/usr/bin/python 
+#!/usr/bin/python3.4
 
 import csv
 import datetime
@@ -11,6 +11,47 @@ EARLY_MORNING="Early morning"
 MORNING="Morning"
 AFTERNOON="Afternoon"
 NIGHT="Night"
+
+
+OFFENSENAMING =  {"BIKE THEFT" : "BURGLARY",
+                  "CAR PROWL"  : "BURGLARY",
+                  "ESCAPE"     : "RUNAWAY",
+                  "WARRANT ARREST" : "WARRANTS",
+                  "VEHICLE THEFT" : "MAIL THEFT",
+                  "WEAPON LAW" :  "WEAPON",
+                  "DRUG/NARCOTIC" : "NARCOTICS",
+                  "PORNOGRAPHY/OBSCENE MAT" : "PORNOGRAPHY",
+                  "EMBEZZLEMENT" : "EMBEZZLE",
+                  "WEAPON LAWS" : "WEAPON",
+                  "LIQUOR VIOLATION" : "LIQUOR",
+                  "LIQUOR LAWS" : "LIQUOR",
+                  "FORGERY"   : "FORGERY/COUNTERFEIT",
+                  "COUNTERFEIT" : "FORGERY/COUNTERFEIT",
+                  "FORGERY/COUNTERFEITING" : "FORGERY/COUNTERFEIT",
+                  "LOITERING" : "PROSTITUTION",
+                  "PURSE SNATCH" : "ROBBERY",
+                  "SHOPLIFTING" : "ROBBERY",
+                  "PICKPOCKET" : "ROBBERY",
+                  "DRIVING UNDER THE INFLUENCE" : "DUI",
+                  "BURGLARY-SECURE PARKING-RES" : "BURGLARY",
+                  "VIOLATION OF COURT ORDER" : "WARRANTS",
+                  "RECKLESS BURNING" : "ARSON",
+                  "THEFT OF SERVICES" : "ROBBERY",
+                  "LARCENY/THEFT" : "BURGLARY",
+                  "INJURY" : "DISORDERLY CONDUCT",
+                  "DISTURBANCE" :  "DISORDERLY CONDUCT",
+                  "ELUDING" : "DISORDERLY CONDUCT",
+                  "OTHER PROPERTY": "BURGLARY",
+                  "FAMILY OFFENSES" :  "DISORDERLY CONDUCT",
+                  "FALSE REPORT"  :  "OTHER OFFENSES",
+                  "OBSTRUCT"  :  "OTHER OFFENSES",
+                  "TRAFFIC"  :  "OTHER OFFENSES",
+                  "ANIMAL COMPLAINT" : "OTHER OFFENSES",
+                  "LOST PROPERTY" : "NON-CRIMINAL",
+
+}
+#OFFENSEREMOVE = ["DRUNKNESS","EXTORTION","GAMBLING","KIDNAPPING","SUICIDE", "BIAS INCIDENT","DISPUTE","FIREWORK","HOMICIDE","ILLEGAL DUMPING","THREATS"]
+OFFENSEREMOVE = ["INC - CASE DC USE ONLY"]
 
 def offensefunction(reportlist):
     crimedict = {}
@@ -32,7 +73,7 @@ def showtop(dictionary, noofitems, sorted = True):
     else:
         sorteddict = sorted(dictionary.items(), key=itemgetter(1),  reverse=True)
     for x in range(0, noofitems):
-        print sorteddict[x][0] + " " + str(sorteddict[x][1])
+        print (sorteddict[x][0] + " " + str(sorteddict[x][1]))
 
 def gettopitems(dictionary, noofitems, sorted = True):
     list1 = []
@@ -60,14 +101,18 @@ def plotgraph(crimedesc, crimeoccur):
      ax = fig.add_subplot(111)
      
 
-     p1 = plt.barh(N, crimeoccur, align='center', color=jet(np.linspace(0, 1.0, len(crimedesc))), height=0.8, alpha=1)
+     p1 = plt.barh(N, crimeoccur, align='edge', color=jet(np.linspace(0, 1.0, len(crimedesc))), height=0.8, alpha=1)
      plt.yticks(N, crimedesc)
      #plt.yticks(N, crimedesc, rotation=25)
-     plt.xlabel('Crimes type')
-     plt.ylabel('Occurance')
+     plt.ylabel('Crime type')
+     plt.xlabel('Occurance')
      plt.yticks(N, crimedesc)
      plt.title('Crime occurance')
      autolabelh(p1, ax)
+     ax.xaxis.set_ticks_position('bottom')
+     ax.yaxis.set_ticks_position('left')
+     plt.axis([0, 6700, l  , 0])
+#     plt.axis([0, 10000, l  , 0])
      plt.tight_layout()
      plt.show()
 
@@ -75,8 +120,8 @@ def autolabel(rects, ax):
     # attach some text labels
     for rect in rects:
         height = rect.get_height()
-        ax.text(rect.get_x() + rect.get_width()/2., 1.05*height,
-                '%d' % int(height),
+        ax.text(rect.get_x() + rect.get_width()/2., height + 4,
+                '%d' % int(height), fontsize=10,
                 ha='center', va='bottom')
 
 def autolabelh(rects, ax):
@@ -84,8 +129,8 @@ def autolabelh(rects, ax):
     for rect in rects:
         width = rect.get_width()
         height = rect.get_height()
-        ax.text(rect.get_x() + 1.05 * width  , rect.get_y() + (height/2) *.98 ,
-                '%d' % int(width),
+        ax.text(4 +rect.get_x() +  width  , rect.get_y() + (height/2) *.98 ,
+                '%d' % int(width), fontsize=10,
                 ha='left', va='center')
 
 def plotgraphchart2(title, earlymorning, morning, afternoon, night):
@@ -96,16 +141,19 @@ def plotgraphchart2(title, earlymorning, morning, afternoon, night):
 # Final hbar !!
       N = len(title)
       ind = np.arange(N)    # the x locations for the groups
-      width = 0.2       # the width of the bars: can also be len(x) sequence
+      width = 0.22       # the width of the bars: can also be len(x) sequence
+
  
-      fig, ax = plt.subplots()
+      fig = plt.figure(figsize=(12,10))
+      ax = fig.add_subplot(111)
       p1 = ax.barh(ind, earlymorning, width, color='r')
       p2 = ax.barh(ind + width, morning, width, color='y')
       p3 = ax.barh(ind + (width * 2), afternoon, width, color='b')
       p4 = ax.barh(ind + (width * 3), night, width, color='g')
      
-      ax.set_ylabel('Occurance')
-      ax.set_title('Scores by group and gender')
+      ax.set_xlabel('Occurance')
+      ax.set_xlabel('Crime category')
+      ax.set_title('Occurance per category subdivided per occurance period')
       ax.set_yticks(ind + (width * 3))
       ax.set_yticklabels(title)
       ax.xaxis.set_ticks_position('bottom')
@@ -115,6 +163,8 @@ def plotgraphchart2(title, earlymorning, morning, afternoon, night):
       autolabelh(p2, ax)
       autolabelh(p3, ax)
       autolabelh(p4, ax)
+      plt.axis([0, 5200, N , 0])
+      plt.tight_layout()
       plt.show()
 
 #     N = len(title)
@@ -171,8 +221,8 @@ def offensefunctionlists(offenselist, rowno, crimedict, crimeoccur):
 #            print 'token does not exists'
             crimedict.append(crime)
             crimeoccur.append(1)
-    print crimedict
-    print crimeoccur
+    print (crimedict)
+    print (crimeoccur)
 
 timeconvert =  {0 : EARLY_MORNING,
                 1 : EARLY_MORNING,
@@ -224,8 +274,8 @@ def chart1(reportlist):
     showtop(crimedict, 20)
     crimedesc, crimeoccur = gettopitems(crimedict, 20)
     plotgraph(crimedesc, crimeoccur)
-    print crimedesc
-    print crimeoccur
+    print (crimedesc)
+    print (crimeoccur)
 
 def preparechart2(dict):
     earlymorning = []
@@ -259,17 +309,27 @@ def plotgraphchart3(title, districtlist, zonelist, occurancelist, colorlist):
      l = len(zonelist)
      N = range(l)
      jet = plt.get_cmap('jet')
-     fig = plt.figure(figsize=(12,8))
+     fig = plt.figure(figsize=(12,10))
      ax = fig.add_subplot(111)
 
-     p1 = plt.barh(N, occurancelist, align='center', color=colorlist, height=0.8, alpha=1)
+     p1 = plt.barh(N, occurancelist, align='edge', color=colorlist, height=0.6, alpha=.8)
+#     p1 = plt.bar(N, occurancelist, align='center', color=colorlist, width=0.6, alpha=.8)
+#     plt.yticks(N, districtlist)
      plt.yticks(N, zonelist)
-     plt.xlabel('Crimes type')
-     plt.ylabel('Occurance')
-     plt.title('Crime occurance')
+#     plt.xticks(N, zonelist, rotation=90)
+     plt.xlabel('Crime occurance')
+#     plt.ylabel('Crime occurance')
+     plt.ylabel('District')
+#     plt.xlabel('District')
+     plt.title('Crime occurance per district')
+     ax.xaxis.set_ticks_position('bottom')
+     ax.yaxis.set_ticks_position('left')
+#    plt.axis([min(x_arr), max(x_arr), max(y_arr), 0])
+#     plt.axis([0, 400 ,l, 0])
+     plt.axis([0, 2700 ,l, 0])
      autolabelh(p1, ax)
-
-
+#     autolabel(p1, ax)
+#     ax.grid(True)
      plt.tight_layout()
      plt.show()
 
@@ -331,17 +391,20 @@ def chart3(reportlist):
     for crim in crimedesc:
         districtlist, zonelist, occurancelist, colorlist = preparechart3(reportlist, crim)
         plotgraphchart3(crim, districtlist, zonelist, occurancelist, colorlist)
-        print districtlist
-        print zonelist 
-        print occurancelist
+        print (districtlist)
+        print (zonelist)
+        print (occurancelist)
 
-def loadcsv(datafile, crimeidx, districtidx, datetimeformat=None, zoneidx=None,reportdatetimeidx= None, alternatereportdatetimeidx=None, reportdateidx=None, reporttimeidx=None, reportdateformat=None, reporttimeformat=None ):
+def loadcsv(datafile, crimeidx, districtidx, datetimeformat=None, zoneidx=None,reportdatetimeidx= None, alternatereportdatetimeidx=None, reportdateidx=None, reporttimeidx=None, reportdateformat=None, reporttimeformat=None, skipoffenses=1 ):
     reportlist = []
-    with open(datafile, 'rb') as csvfile:
+    with open(datafile, 'r') as csvfile:
         next(csvfile) # has header
         offenselist = csv.reader(csvfile, delimiter=',', quotechar='|')
         for row in offenselist:
             crime = row[crimeidx]
+            if skipoffenses == 1:
+                if crime in OFFENSEREMOVE:
+                    continue
             if reportdatetimeidx is not None:
                 if row[reportdatetimeidx] == "":
                     rd = row[alternatereportdatetimeidx]
@@ -358,23 +421,100 @@ def loadcsv(datafile, crimeidx, districtidx, datetimeformat=None, zoneidx=None,r
             reportlist.append(Report(crime,reportdate, district, zone))
     return reportlist
 
+def allignnaming(reportlist):
+    for row in reportlist:
+        if row.offense in OFFENSENAMING:
+            row.offense = OFFENSENAMING[row.offense]
+
+def getOffenselist(alist):
+    lst = []
+    for row in alist:
+        lst.append(row.offense)
+    return lst
+
+def getOffense(alist, offense):
+    count = 0
+    for row in alist:
+        if offense == row.offense:
+            count +=1
+    return count
+
+def chart4(reportlist_seattle, reportlist_sanfrancisco):
+    allignnaming(reportlist_sanfrancisco)
+    allignnaming(reportlist_seattle)
+
+    a = getOffenselist(reportlist_sanfrancisco) 
+    
+    offenses = list(set(getOffenselist(reportlist_sanfrancisco) + getOffenselist(reportlist_seattle)))
+    off_sf = []
+    off_se = []
+    for offense in offenses:
+        off_sf.append(getOffense(reportlist_sanfrancisco, offense))
+        off_se.append(getOffense(reportlist_seattle, offense))
+      
+    N = len(offenses)
+    ind = np.arange(N)    # the x locations for the groups
+    width = 0.4       # the width of the bars: can also be len(x) sequence
+ 
+#    fig = plt.figure(figsize=(14,8))
+    fig = plt.figure(figsize=(12,12))
+    #    plt.axis([min(x_arr), max(x_arr), max(y_arr), 0])
+    ax = fig.add_subplot(111)
+
+    # fig, ax = plt.subplots()
+    p1 = ax.barh(ind, off_sf, width, color='r')
+    p2 = ax.barh(ind + width, off_se, width, color='b')
+#    p1 = ax.bar(ind, off_sf, width, color='r')
+#    p2 = ax.bar(ind + width, off_se, width, color='b')
+    
+    ax.set_ylabel('Crime occurance')
+    ax.set_title('Crime reports per state')
+    ax.set_yticks(ind + (width ))
+    ax.set_yticklabels(offenses)
+ #   ax.set_xticks(ind + (width ))
+#   ax.set_xticklabels(offenses)
+    ax.xaxis.set_ticks_position('bottom')
+    ax.yaxis.set_ticks_position('left')
+    ax.legend((p1[0], p2[0] ), ("San Francisco", "Seattle"))
+#    autolabelh(p1, ax)
+#    autolabelh(p2, ax)
+#    autolabel(p1, ax)
+#    autolabel(p2, ax)
+#    plt.xticks(range(N), offenses, rotation=90)
+#    plt.axis([min(x_arr), max(x_arr), max(y_arr), 0])
+#    plt.axis([0,N , 0, 15000])
+    plt.axis([0,15200 , N, 0])
+    ax.grid(True)
+
+    plt.tight_layout()
+    plt.show()
+
 def main():
     # 6 Summary Offense Code
     # 8 Date Reported
     # 9 Actual Date (sometimes None)
     # 11 District/Sector
     # 12 Zone/Beat
-#    reportlist = loadcsv(datafile='seattle_incidents_summer_2014.csv', crimeidx=6, reportdatetimeidx=9, alternatereportdatetimeidx=8, districtidx=11, zoneidx=12, datetimeformat="%m/%d/%Y %H:%M:%S %p")
+    reportlist_seattle = loadcsv(datafile='seattle_incidents_summer_2014.csv', crimeidx=6, reportdatetimeidx=9, alternatereportdatetimeidx=8, districtidx=11, zoneidx=12, datetimeformat="%m/%d/%Y %H:%M:%S %p")
+#    reportlist_seattle = loadcsv(datafile='seattle_incidents_summer_2014.csv', crimeidx=4, reportdatetimeidx=9, alternatereportdatetimeidx=8, districtidx=11, zoneidx=12, datetimeformat="%m/%d/%Y %H:%M:%S %p")
+#    print "Total reports : " + str(len(reportlist_seattle))
     # 2 Category
     # 4 Date
     # 5 Time
     # 8 District
-    reportlist = loadcsv(datafile='sanfrancisco_incidents_summer_2014.csv', crimeidx=2, reportdateidx=4, reporttimeidx=5, districtidx=6, datetimeformat = "%m/%d/%Y %H:%M")
+    reportlist_sanfrancisco = loadcsv(datafile='sanfrancisco_incidents_summer_2014.csv', crimeidx=1,reportdateidx=4, reporttimeidx=5, districtidx=6, datetimeformat = "%m/%d/%Y %H:%M")
+#    print "Total reports : " + str(len(reportlist_sanfrancisco))
 #    for r in reportlist:
 #        print r
+    reportlist = reportlist_sanfrancisco
+#   reportlist = reportlist_seattle
     chart1(reportlist)
 #    chart2(reportlist)
 #    chart3(reportlist)
+#     chart4(reportlist_seattle, reportlist_sanfrancisco)
+#    for row in reportlist:
+#        print row.offense
+#    timeconvert[row.reportdate.time().hour]
 
 
 if __name__ == '__main__':
